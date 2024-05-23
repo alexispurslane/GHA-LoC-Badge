@@ -3,7 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const core = require('@actions/core');
 const { glob } = require('glob-gitignore');
-
+const exec = require('@actions/exec');
 
 const st = Date.now();
 const dir = core.getInput('directory') || './';
@@ -23,20 +23,12 @@ if (debug) core.info('Debugging enabled.');
 
 
 async function countLines(fullPath) {
-	return new Promise((res, rej) => {
-		let count = 1;
-		require('fs').createReadStream(fullPath)
-			.on('data', function(chunk) {
-				let index = -1;
-				while((index = chunk.indexOf(10, index + 1)) > -1) count++
-			})
-			.on('end', function() {
-				res(count);
-			})
-			.on('error', function(err) {
-				rej(err)
-			});
-	})
+    const output = await exec.getExecOutput('cloc', ["--quiet", "--hide-rate", "--csv", fullPath]);
+    const lines = output.stdout.split('\n');
+    const rows = lines[lines.length-1].split(',')
+    const result = parseInt(rows[rows.length-1]);
+    console.log("Total source lines counted: ", result);
+    return result;
 }
 
 const countThrottled = throttle(countLines, 10);
@@ -111,6 +103,8 @@ function makeBadge(text, config) {
 	});
 }
 
+
+await exec.exec('sudo apt-get install -y cloc');
 
 getFiles(dir, patterns, ignore).then( async ret => {
 	core.info(`Counted ${ret.lines} Lines from ${ret.counted} Files, ignoring ${ret.ignored} Files.`)
