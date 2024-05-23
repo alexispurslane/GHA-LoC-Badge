@@ -105,7 +105,7 @@ function makeBadge(text, config) {
 
 
 exec.exec('sudo apt-get install -y cloc').then((code) => {
-    if (code) {
+    if (code === 0) {
         getFiles(dir, patterns, ignore).then( async ret => {
             core.info(`Counted ${ret.lines} Lines from ${ret.counted} Files, ignoring ${ret.ignored} Files.`)
             core.info(`Took: ${Date.now() - st}`);
