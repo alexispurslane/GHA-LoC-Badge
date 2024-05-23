@@ -23,8 +23,16 @@ if (debug) core.info('Debugging enabled.');
 
 
 async function countLines(fullPath) {
-    const output = await exec.getExecOutput('cloc', ["--quiet", "--hide-rate", "--csv", fullPath]);
-    const lines = output.stdout.split('\n');
+    let output = '';
+    const options = {
+        listeners: {
+            stdout: (data) => {
+                output += data.toString();
+            }
+        }
+    }
+    await exec.exec('cloc', ["--quiet", "--hide-rate", "--csv", fullPath], options);
+    const lines = output.split('\n');
     const rows = lines[lines.length-1].split(',')
     const result = parseInt(rows[rows.length-1]);
     console.log("Total source lines counted: ", result);
