@@ -1,5 +1,5 @@
 name: 'Source Lines of Code Badge'
-description: 'Generate a badge to display total Lines of Code'
+description: 'Generate a badge to display total lines of source code (excluding blank lines and commentS) using the cloc tool.'
 inputs:
   directory:
     description: 'The directory to scan.'
@@ -45,7 +45,7 @@ inputs:
 
 outputs:
   total_lines:
-    description: 'The total line count.'
+    description: 'The total source code line count.'
   counted_files:
     description: 'A count of all files that were included in the total.'
   elapsed_ms:
