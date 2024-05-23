@@ -1,12 +1,17 @@
-# LoC-Badge ![Generated Button](https://raw.githubusercontent.com/shadowmoose/GHA-LoC-Badge/image-data/badge.svg)
-Count project Lines of Code & generate a badge for display.
+# LoC-Badge ![Generated Button](https://raw.githubusercontent.com/alexispurslane/GHA-LoC-Badge/image-data/badge.svg)
+
+Based on shadowmoose's GHA-LoC-Badge!
+
+Use [cloc](https://github.com/AlDanial/cloc?tab=readme-ov-file#overview-) to
+count the source code lines of the specified source code files (not including
+blank lines or comments), as opposed to shadowmoose's, which counts all lines.
 
 ## To use:
 In a Github Action, download your project and run this action:
 
 ```yaml
       - name: Make Code Badge
-        uses: shadowmoose/GHA-LoC-Badge@1.0.0
+        uses: alexispurslane/GHA-LoC-Badge@2.0.0
         id: badge
         with:
           debug: true
