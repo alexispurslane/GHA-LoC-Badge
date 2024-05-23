@@ -104,20 +104,24 @@ function makeBadge(text, config) {
 }
 
 
-await exec.exec('sudo apt-get install -y cloc');
+exec.exec('sudo apt-get install -y cloc').then((code) => {
+    if (code) {
+        getFiles(dir, patterns, ignore).then( async ret => {
+            core.info(`Counted ${ret.lines} Lines from ${ret.counted} Files, ignoring ${ret.ignored} Files.`)
+            core.info(`Took: ${Date.now() - st}`);
 
-getFiles(dir, patterns, ignore).then( async ret => {
-	core.info(`Counted ${ret.lines} Lines from ${ret.counted} Files, ignoring ${ret.ignored} Files.`)
-	core.info(`Took: ${Date.now() - st}`);
+            core.setOutput("total_lines", `${ret.lines}`);
+            core.setOutput("ignored_files", `${ret.ignored}`);
+            core.setOutput("counted_files", `${ret.counted}`);
+            core.setOutput("elapsed_ms", `${Date.now() - st}`);
+            core.setOutput("output_path", `${path.resolve(badge)}`);
+            core.setOutput("output_dir", `${path.resolve(path.dirname(badge))}`);
 
-	core.setOutput("total_lines", `${ret.lines}`);
-	core.setOutput("ignored_files", `${ret.ignored}`);
-	core.setOutput("counted_files", `${ret.counted}`);
-	core.setOutput("elapsed_ms", `${Date.now() - st}`);
-	core.setOutput("output_path", `${path.resolve(badge)}`);
-	core.setOutput("output_dir", `${path.resolve(path.dirname(badge))}`);
+            await fs.mkdir(path.dirname(badge), { recursive: true })
 
-	await fs.mkdir(path.dirname(badge), { recursive: true })
-
-	await fs.writeFile(badge, makeBadge(ret.lines.toLocaleString(), badgeOpts));
-})
+            await fs.writeFile(badge, makeBadge(ret.lines.toLocaleString(), badgeOpts));
+        });
+    } else {
+        console.error("Installation failed");
+    }
+});
